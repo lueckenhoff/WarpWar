@@ -14,6 +14,7 @@ int main (int argc, char **argv)
     int target_ships_tactic;
     int result;
     int status;
+    int be_verbose = 0;
 
     printf("argc=%d\n", argc);
     if  (argc < 4)
@@ -40,8 +41,11 @@ int main (int argc, char **argv)
            target_ships_tactic_str, target_ships_tactic);
     printf("drive_diff: %d\n", drive_diff);
     status = combat_result(firing_ships_tactic, target_ships_tactic,
-                           drive_diff, &result);
-    printf("DBG: combat_result returned %d\n", status);
+                           drive_diff, &result, be_verbose);
+    if (be_verbose)
+    {
+        printf("DBG: combat_result returned %d\n", status);
+    }
     printf("result: %s\n", result_to_str(result));
     return 0;
 }

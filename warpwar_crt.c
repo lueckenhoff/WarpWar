@@ -26,11 +26,10 @@ char * result_to_str (int result)
 }
 
 int
-combat_result (int firing_ships_tactic, int target_ships_tactic, int drive_diff, int *ptr_result)
+combat_result (int firing_ships_tactic, int target_ships_tactic, int drive_diff, int *ptr_result, int verbose)
 {
     int status = 0;
     int row, column;
-    int ix, jx;
 
     const int result_tbl [14][3] =
     {
@@ -56,7 +55,10 @@ combat_result (int firing_ships_tactic, int target_ships_tactic, int drive_diff,
 /* Retreat +1 or more */ {RESULT_MISS,      RESULT_MISS,      RESULT_ESCAPES},
     };
 
-    printf("DBG: combat_result (firing_ships_tactic=%d, target_ships_tactic=%d, drive_diff=%d, ptr_result=%p)\n", firing_ships_tactic, target_ships_tactic, drive_diff, ptr_result);
+    if (verbose)
+    {
+        printf("DBG: combat_result (firing_ships_tactic=%d, target_ships_tactic=%d, drive_diff=%d, ptr_result=%p)\n", firing_ships_tactic, target_ships_tactic, drive_diff, ptr_result);
+    }
 
     if (!ptr_result)
     {
@@ -148,16 +150,22 @@ combat_result (int firing_ships_tactic, int target_ships_tactic, int drive_diff,
     default:
         return -1;
     }
-    printf("DBG: row=%d,column=%d\n", row, column);
-    printf("DBG: result_tbl[row][column]=%d\n", result_tbl[row][column]);
-    for (ix = 0 ; ix < 14; ix++)
+
+    if (verbose)
     {
-        printf("DBG: result_tbl[%2d]: ", ix);
-        for (jx = 0 ; jx < 3; jx++)
+        int ix, jx;
+
+        printf("DBG: row=%d,column=%d\n", row, column);
+        printf("DBG: result_tbl[row][column]=%d\n", result_tbl[row][column]);
+        for (ix = 0 ; ix < 14; ix++)
         {
-            printf("%s ", result_to_str(result_tbl[ix][jx]));
+            printf("DBG: result_tbl[%2d]: ", ix);
+            for (jx = 0 ; jx < 3; jx++)
+            {
+                printf("%s ", result_to_str(result_tbl[ix][jx]));
+            }
+            printf("\n");
         }
-        printf("\n");
     }
 
     *ptr_result = result_tbl[row][column];

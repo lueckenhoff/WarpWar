@@ -23,7 +23,8 @@ int combat_result
     int firing_ships_tactic,
     int target_ships_tactic,
     int drive_diff,
-    int *ptr_result);
+    int *ptr_result,
+    int verbose);
 
 int string_to_tactic (char *str);
 
