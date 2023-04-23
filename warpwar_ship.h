@@ -31,12 +31,13 @@ typedef enum {
 struct warpwar_ship_t {
     unsigned int            idnum;
     unsigned int            flags;
+    unsigned int            tech_level;
     unsigned int            current_pd_setting;
     unsigned int            current_tactic;
     unsigned int            current_result;
     unsigned int            current_location_hex_id;
-    warpwar_ship_stats_t    full_stats;
-    warpwar_ship_stats_t    curr_stats;
+    warpwar_ship_stats_t    stats_full;
+    warpwar_ship_stats_t    stats_current;
     struct warpware_ship_t *systemship_list;
     struct warpware_ship_t *next;
 };
@@ -52,7 +53,8 @@ extern struct warpwar_ship_t * warpwar_ship_build
     unsigned int            t  /* Tubes */,
     unsigned int            m  /* Missiles */,
     unsigned int            sr /* Systemship Racks */,
-    unsigned int *          ptr_credits_in_bank
+    unsigned int *          ptr_credits_in_bank,
+    warpwar_bool_t          verbose
     );
 
 extern void warpwar_print_one_ship(struct warpwar_ship_t * ship);
