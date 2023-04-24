@@ -160,13 +160,10 @@ void warpwar_print_all_ships (void)
 {
     struct warpwar_ship_t * ship;
 
-    ship = gbl_ship_list;
-
     printf("All ships:\n");
-    while (ship)
+    for (ship = gbl_ship_list; ship; ship = ship->next)
     {
         warpwar_print_one_ship(ship);
-        ship = ship->next;
     }
 }
 
