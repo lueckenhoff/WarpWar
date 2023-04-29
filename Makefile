@@ -2,12 +2,12 @@
 
 SHELL = /bin/sh
 BUILD_DIR := build
-CC = cc
+CC = clang
 CFLAGS = -g
 LD = ${CC}
 LDFLAGS = 
-CRT_DEMO_OBJS=crt_demo.o warpwar_crt.o
-SHIP_DEMO_OBJS=ship_demo.o warpwar_ship.o warpwar_crt.o
+DEMO_CRT_OBJS=demo_crt.o warpwar_crt.o
+DEMO_SHIP_OBJS=demo_ship.o warpwar_ship.o warpwar_crt.o
 .SUFFIXES:
 .SUFFIXES: .c .o
 
@@ -16,20 +16,18 @@ SHIP_DEMO_OBJS=ship_demo.o warpwar_ship.o warpwar_crt.o
 #	$(MKDIR_P) $(dir $@)
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-all:	crt_demo ship_demo
+all:	demo_crt demo_ship
 
-crt_demo:	${CRT_DEMO_OBJS}
+demo_crt:	${DEMO_CRT_OBJS}
 	${LD} $^ -o $@
 
-ship_demo:	${SHIP_DEMO_OBJS}
+demo_ship:	${DEMO_SHIP_OBJS}
 	${LD} $^ -o $@
 
 .PHONY: clean
 clean:
-	${RM} ${CRT_DEMO_OBJS}
-	${RM} ${SHIP_DEMO_OBJS}
+	${RM} ${DEMO_CRT_OBJS} ${DEMO_SHIP_OBJS}
 
 .PHONY: distclean
 distclean:	clean
-	${RM} crt_demo
-	${RM} ship_demo
+	${RM} demo_crt demo_ship
