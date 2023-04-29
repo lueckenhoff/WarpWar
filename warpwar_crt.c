@@ -6,6 +6,21 @@
 
 #include "warpwar_crt.h"
 
+char * tactic_to_str (int tactic)
+{
+    switch (tactic)
+    {
+    case TACTIC_ATTACK:
+        return "attack";
+    case TACTIC_DODGE:
+        return "dodge";
+    case TACTIC_RETREAT:
+        return "retreat";
+    default:
+        return "Invalid tactic!";
+    }
+}
+
 char * result_to_str (int result)
 {
     switch (result)

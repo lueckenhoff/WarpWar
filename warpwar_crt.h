@@ -16,9 +16,10 @@ enum {
     RESULT_ESCAPES = 3
 };
 
-char * result_to_str (int result);
+extern char * result_to_str(int result);
+extern char * tactic_to_str(int tactic);
 
-int combat_result
+extern int combat_result
     (
     int firing_ships_tactic,
     int target_ships_tactic,
@@ -26,7 +27,7 @@ int combat_result
     int *ptr_result,
     int verbose);
 
-int string_to_tactic (char *str);
+extern int string_to_tactic (char *str);
 
 
 #endif /* not _INC_WARPWAR_CRT_H_ */
