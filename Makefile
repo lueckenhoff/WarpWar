@@ -7,7 +7,7 @@ CFLAGS = -g
 LD = ${CC}
 LDFLAGS = 
 CRT_DEMO_OBJS=crt_demo.o warpwar_crt.o
-SHIP_DEMO_OBJS=ship_demo.o warpwar_ship.o
+SHIP_DEMO_OBJS=ship_demo.o warpwar_ship.o warpwar_crt.o
 .SUFFIXES:
 .SUFFIXES: .c .o
 
