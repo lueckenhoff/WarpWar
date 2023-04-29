@@ -8,7 +8,7 @@
 typedef int warpwar_bool_t;  /* boolean */
 
 typedef struct {
-    /* use this terse terminology to stay aligned with the 1977 rulebook */
+    /* terse terminology to align with the 1977 rulebook */
     unsigned int        pd; /* Power Drive */
     unsigned int        b;  /* Beams */
     unsigned int        s;  /* Shields */
@@ -30,14 +30,17 @@ typedef enum {
 
 struct warpwar_ship_t {
     unsigned int            idnum;
+    char                    name[8];
+    unsigned int            target_idnum;
     unsigned int            flags;
     unsigned int            tech_level;
-    unsigned int            current_pd_setting;
     unsigned int            current_tactic;
     unsigned int            current_result;
     unsigned int            current_location_hex_id;
     warpwar_ship_stats_t    stats_full;
-    warpwar_ship_stats_t    stats_current;
+    warpwar_ship_stats_t    stats_effective;
+    warpwar_ship_stats_t    current_orders;
+    unsigned int *          missile_pd_settings;
     struct warpware_ship_t *systemship_list;
     struct warpware_ship_t *next;
 };
@@ -54,6 +57,17 @@ extern struct warpwar_ship_t * warpwar_ship_build
     unsigned int            m  /* Missiles */,
     unsigned int            sr /* Systemship Racks */,
     unsigned int *          ptr_credits_in_bank,
+    warpwar_bool_t          verbose
+    );
+
+extern char * warpwar_ship_name_get(unsigned int idnum);
+
+extern int warpwar_ship_issue_orders
+    (
+    unsigned int            ship_idnum,
+    unsigned int            target_idnum,
+    int                     tactic,
+    warpwar_ship_stats_t *  orders,
     warpwar_bool_t          verbose
     );
 

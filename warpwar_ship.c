@@ -5,11 +5,15 @@
 #include <strings.h>    /* for bzero */
 #include <assert.h>     /* for assert */
 #include "warpwar_ship.h"
+#include "warpwar_crt.h"
 
 struct warpwar_ship_t * gbl_ship_list = NULL;
 unsigned gbl_ship_idnum = 0;
 
-struct warpwar_ship_t * warpwar_ship_build
+
+
+struct warpwar_ship_t *
+warpwar_ship_build
     (
     warpwar_bool_t          isa_warpship,
     warpwar_allegiance_t    allegiance   /* WHITE or BLUE */,
@@ -42,6 +46,11 @@ struct warpwar_ship_t * warpwar_ship_build
         printf("DBG: warpwar_ship_build: calculating cost\n");
         fflush(stdout);
     }
+    if (m % 3)
+    {
+        printf("Error: warpwar_ship_build: must buy missiles in units of 3\n");
+        return NULL;
+    }
     cost = pd + b + s + t + m/3 + sr;
 
     if (verbose)
@@ -66,6 +75,7 @@ struct warpwar_ship_t * warpwar_ship_build
     newship = malloc(sizeof(struct warpwar_ship_t));
     if (!newship)
     {
+        fprintf(stderr, "warpwar_ship_build: Error! cannot allocate memory!\n");
         return NULL;
     }
     if (verbose)
@@ -74,6 +84,17 @@ struct warpwar_ship_t * warpwar_ship_build
         fflush(stdout);
     }
     bzero(newship, sizeof(struct warpwar_ship_t));
+    if (t > 0)
+    {
+        newship->missile_pd_settings =
+            (unsigned int *) malloc(sizeof(unsigned int) * t);
+        if (!newship->missile_pd_settings)
+        {
+            fprintf(stderr, "warpwar_ship_build: Error! cannot allocate memory for missiles\n");
+            free(newship);
+            return NULL;
+        }
+    }
     if (verbose)
     {
         printf("DBG: warpwar_ship_build: about assign ID num\n");
@@ -101,6 +122,11 @@ struct warpwar_ship_t * warpwar_ship_build
     if (isa_warpship)
     {
         newship->flags |= FLAG_WARPSHIP;
+        snprintf(newship->name, sizeof(newship->name), "W%u", newship->idnum);
+    }
+    else
+    {
+        snprintf(newship->name, sizeof(newship->name), "S%u", newship->idnum);
     }
     newship->stats_full.pd = pd;
     newship->stats_full.b = b;
@@ -110,10 +136,10 @@ struct warpwar_ship_t * warpwar_ship_build
     newship->stats_full.sr = sr;
     if (verbose)
     {
-        printf("DBG: warpwar_ship_build: about to copy stats_full to stats_current\n");
+        printf("DBG: warpwar_ship_build: about to copy stats_full to stats_effective\n");
         fflush(stdout);
     }
-    newship->stats_current = newship->stats_full;
+    newship->stats_effective = newship->stats_full;
     if (verbose)
     {
         printf("DBG: warpwar_ship_build about to add new ship to list\n");
@@ -126,6 +152,129 @@ struct warpwar_ship_t * warpwar_ship_build
     gbl_ship_list = newship;
     return newship;
 }
+
+
+
+struct warpwar_ship_t *
+warpwar_ship_lookup_by_idnum (unsigned int idnum)
+{
+    struct warpwar_ship_t * ship;
+
+    for (ship = gbl_ship_list; ship; ship = ship->next)
+    {
+        if (ship->idnum == idnum)
+        {
+            return (ship);
+        }
+    }
+    return NULL;
+}
+
+
+
+char * warpwar_ship_name_get (unsigned int idnum)
+{
+    struct warpwar_ship_t *ship = warpwar_ship_lookup_by_idnum(idnum);
+
+    if (ship)
+    {
+        return ship->name;
+    }
+    return "NULL";
+}
+
+
+
+int
+warpwar_ship_issue_orders
+    (
+    unsigned int            ship_idnum,
+    unsigned int            target_idnum,
+    int                     tactic,
+    warpwar_ship_stats_t *  orders,
+    warpwar_bool_t          verbose
+    )
+{
+    struct warpwar_ship_t *ship;
+    struct warpwar_ship_t *target_ship;
+    unsigned int sum;
+
+    /* Step 1: is given ship ID valid? Lookup subject ship by IDnum */
+    ship = warpwar_ship_lookup_by_idnum(ship_idnum);
+    if (!ship)
+    {
+        if (verbose)
+        {
+            printf("warpwar_ship_issue_orders: invalid ship ID %u\n", ship_idnum);
+        }
+        return -1;
+    }
+
+    /* Step 2: is given target ID valid? Lookup target ship by IDnum */
+    target_ship = warpwar_ship_lookup_by_idnum(target_idnum);
+    if (!target_ship)
+    {
+        if (verbose)
+        {
+            printf("warpwar_ship_issue_orders: invalid target ID %u\n", target_idnum);
+        }
+        return -1;
+    }
+
+    /* Step 3: is given tactic valid? Must be one of {Attack,Dodge,Retreat} */
+    if (   (TACTIC_ATTACK  != tactic)
+        && (TACTIC_DODGE   != tactic)
+        && (TACTIC_RETREAT != tactic))
+    {
+        if (verbose)
+        {
+            printf("warpwar_ship_issue_orders: invalid tactic %d\n", tactic);
+        }
+        return -1;
+    }
+   
+    /* Step 4: are given power settings valid?                  */
+    /* a) Orders cannot exceed effective stats                  */
+    if (   (orders->pd > ship->stats_effective.pd) 
+        || (orders->b > ship->stats_effective.b) 
+        || (orders->s > ship->stats_effective.s) 
+        || (orders->t > ship->stats_effective.t))
+    {
+        if (verbose)
+        {
+            printf("warpwar_ship_issue_orders: orders exceed effective stats!\n");
+        }
+        return -1;
+    }
+
+    /* b) Sum of (beams,shields, tubes, SR and ordered drive,   */
+    /*    must be less than or equal to effective PD            */
+    sum = orders->pd + orders->b + orders->s + orders->t;
+    if (sum > ship->stats_effective.pd)
+    {
+        if (verbose)
+        {
+            printf("warpwar_ship_issue_orders: orders exceed effective PD!\n");
+        }
+        return -1;
+    }
+
+    if (verbose)
+    {
+        printf("%s %s target=%s settings: pd=%u b=%u s=%u t=%u\n",
+                ship->name, tactic_to_str(tactic),
+                target_ship->name,
+                orders->pd, orders->b, orders->s, orders->t);
+    }
+
+     /* Step 5: copy the orders into the ship (will resolve it separately) */
+    ship->current_tactic = tactic;
+    memcpy(&ship->current_orders, orders, sizeof(warpwar_ship_stats_t));
+
+    return 0;       /* signal success */
+}
+
+
 
 void warpwar_print_one_ship (struct warpwar_ship_t * ship)
 {
@@ -148,13 +297,15 @@ void warpwar_print_one_ship (struct warpwar_ship_t * ship)
     }
     printf("%u ", ship->idnum);
     printf(" pd %u, b %u, s %u, t %u, m %u, sr %u\n",
-        ship->stats_current.pd,
-        ship->stats_current.b,
-        ship->stats_current.s,
-        ship->stats_current.t,
-        ship->stats_current.m,
-        ship->stats_current.sr);
+        ship->stats_effective.pd,
+        ship->stats_effective.b,
+        ship->stats_effective.s,
+        ship->stats_effective.t,
+        ship->stats_effective.m,
+        ship->stats_effective.sr);
 }
+
+
 
 void warpwar_print_all_ships (void)
 {
