@@ -53,20 +53,34 @@ int main (int argc, char **argv)
     }
 
     warpwar_resolve_all_attacks();
+    warpwar_resolve_all_ships_damages();
+    warpwar_print_all_ships();
 
-#if 0
-    rval = combat_result(warpwar_ship_tactic_get(1),
-                         warpwar_ship_tactic_get(2),
-                         warpwar_ship_pd_get(1) - warpwar_ship_pd_get(2),
-                         &result, be_verbose = 0);
-    printf("1 targeting 2 result: %s\n", result_to_str(result));
+    /* have ship id=1 attack ship id=2 with its beam */
+    memset(&orders, 0, sizeof(orders));
+    orders.pd = 2;
+    orders.b  = 5;
+    orders.s  = 3;
+    rval = warpwar_ship_issue_orders(1, 2, TACTIC_ATTACK, &orders, 1);
+    if (rval < 0)
+    {
+        printf("warpwar_ship_issue_orders returned %d\n", rval);
+    }
 
-    rval = combat_result(warpwar_ship_tactic_get(2),
-                         warpwar_ship_tactic_get(1),
-                         warpwar_ship_pd_get(2) - warpwar_ship_pd_get(1),
-                         &result, be_verbose = 0);
-    printf("2 targeting 1 result: %s\n", result_to_str(result));
-#endif
+    /* have ship id=2 attack ship id=1 with its beam */
+    memset(&orders, 0, sizeof(orders));
+    orders.pd = 1;
+    orders.b  = 5;
+    orders.s  = 0;
+    rval = warpwar_ship_issue_orders(2, 1, TACTIC_DODGE, &orders, 1);
+    if (rval < 0)
+    {
+        printf("warpwar_ship_issue_orders returned %d\n", rval);
+    }
+
+    warpwar_resolve_all_attacks();
+    warpwar_resolve_all_ships_damages();
+    warpwar_print_all_ships();
 
     return 0;
 }

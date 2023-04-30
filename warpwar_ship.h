@@ -79,5 +79,7 @@ extern void warpwar_print_all_ships(void);
 extern int warpwar_ship_tactic_get(unsigned int idnum);
 extern int warpwar_ship_pd_get(unsigned int idnum);
 extern void warpwar_resolve_all_attacks(void);
+extern void warpwar_resolve_all_ships_damages(void);
+extern warpwar_bool_t warpwar_ship_isdead(struct warpwar_ship_t * ship);
 
 #endif /* not _INC_WARPWAR_SHIP_H_ */
