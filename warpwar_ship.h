@@ -18,6 +18,8 @@ typedef struct {
 } warpwar_ship_stats_t;
 
 enum {
+    NO_SHIP        = 0 /* indicates "not shooting at anybody this turn" */,
+
     FLAG_WHITE     = 0x1,
     FLAG_BLUE      = 0x2,
     FLAG_WARPSHIP  = 0x4
@@ -37,6 +39,7 @@ struct warpwar_ship_t {
     unsigned int            current_tactic;
     unsigned int            current_result;
     unsigned int            current_location_hex_id;
+    unsigned int            current_damage;
     warpwar_ship_stats_t    stats_full;
     warpwar_ship_stats_t    stats_effective;
     warpwar_ship_stats_t    current_orders;
@@ -73,4 +76,8 @@ extern int warpwar_ship_issue_orders
 
 extern void warpwar_print_one_ship(struct warpwar_ship_t * ship);
 extern void warpwar_print_all_ships(void);
+extern int warpwar_ship_tactic_get(unsigned int idnum);
+extern int warpwar_ship_pd_get(unsigned int idnum);
+extern void warpwar_resolve_all_attacks(void);
+
 #endif /* not _INC_WARPWAR_SHIP_H_ */

@@ -17,6 +17,7 @@ enum {
 };
 
 extern char * result_to_str(int result);
+extern int result_to_damage(int result, int b, int s);
 extern char * tactic_to_str(int tactic);
 
 extern int combat_result

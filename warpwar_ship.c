@@ -8,7 +8,7 @@
 #include "warpwar_crt.h"
 
 struct warpwar_ship_t * gbl_ship_list = NULL;
-unsigned gbl_ship_idnum = 0;
+unsigned gbl_ship_idnum = NO_SHIP;
 
 
 
@@ -185,6 +185,32 @@ char * warpwar_ship_name_get (unsigned int idnum)
 
 
 
+int warpwar_ship_tactic_get (unsigned int idnum)
+{
+    struct warpwar_ship_t *ship = warpwar_ship_lookup_by_idnum(idnum);
+
+    if (ship)
+    {
+        return ship->current_tactic;
+    }
+    return TACTIC_BOGUS;
+}
+
+
+
+int warpwar_ship_pd_get (unsigned int idnum)
+{
+    struct warpwar_ship_t *ship = warpwar_ship_lookup_by_idnum(idnum);
+
+    if (ship)
+    {
+        return ship->current_orders.pd;
+    }
+    return 0;
+}
+
+
+
 int
 warpwar_ship_issue_orders
     (
@@ -269,6 +295,7 @@ warpwar_ship_issue_orders
 
      /* Step 5: copy the orders into the ship (will resolve it separately) */
     ship->current_tactic = tactic;
+    ship->target_idnum = target_idnum;
     memcpy(&ship->current_orders, orders, sizeof(warpwar_ship_stats_t));
 
     return 0;       /* signal success */
@@ -315,6 +342,56 @@ void warpwar_print_all_ships (void)
     for (ship = gbl_ship_list; ship; ship = ship->next)
     {
         warpwar_print_one_ship(ship);
+    }
+}
+
+
+
+static int warpwar_resolve_one_attack (struct warpwar_ship_t * ship)
+{
+    struct warpwar_ship_t *target_ship;
+    int rval;
+    int result;
+    int be_verbose = 0;
+    int damage;
+
+    assert(ship);
+    printf("warpwar_resolve_one_attack: %s\n", ship->name);
+    if (NO_SHIP == ship->target_idnum)
+    {
+        printf("warpwar_resolve_one_attack: %s no ship targeted, returning\n", ship->name);
+        return 0;
+    }
+    target_ship = warpwar_ship_lookup_by_idnum(ship->target_idnum);
+    if (!target_ship)
+    {
+        printf("warpwar_resolve_one_attack: target ship %u does not exist!\n", ship->target_idnum);
+        return -1;
+    }
+    rval = combat_result(warpwar_ship_tactic_get(ship->idnum),
+                         warpwar_ship_tactic_get(target_ship->idnum),
+                         warpwar_ship_pd_get(ship->idnum)
+                                 - warpwar_ship_pd_get(target_ship->idnum),
+                         &result, be_verbose = 0);
+    printf("%s targeting %s result: %s\n", ship->name, target_ship->name,
+           result_to_str(result));
+    damage = result_to_damage(result, ship->current_orders.b, target_ship->current_orders.s);
+    printf("%s targeting %s damage=%d\n", ship->name, target_ship->name, damage);
+    target_ship->current_damage += damage;
+    printf("%s current_damage := %u\n", target_ship->name,
+           target_ship->current_damage);
+    return 0;
+}
+
+
+
+void warpwar_resolve_all_attacks (void)
+{
+    struct warpwar_ship_t * ship;
+
+    for (ship = gbl_ship_list; ship; ship = ship->next)
+    {
+        warpwar_resolve_one_attack(ship);
     }
 }
 

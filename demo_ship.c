@@ -15,7 +15,9 @@ int main (int argc, char **argv)
     unsigned int pd, b, s, t, m, sr;
     unsigned int credits_in_bank = 10000;
     warpwar_ship_stats_t   orders;
+    int result;
     int rval;
+    int be_verbose;
 
     ptr_ship = warpwar_ship_build(isa_warpship = 1, ALLEGIANCE_BLUE,
         pd = 10, b = 5, s = 5, t = 1, m = 3, sr = 0,
@@ -41,14 +43,30 @@ int main (int argc, char **argv)
 
     /* have ship id=2 attack ship id=1 with its beam */
     memset(&orders, 0, sizeof(orders));
-    orders.pd = 2;
-    orders.b  = 4;
+    orders.pd = 4;
+    orders.b  = 2;
     orders.s  = 2;
     rval = warpwar_ship_issue_orders(2, 1, TACTIC_ATTACK, &orders, 1);
     if (rval < 0)
     {
         printf("warpwar_ship_issue_orders returned %d\n", rval);
     }
+
+    warpwar_resolve_all_attacks();
+
+#if 0
+    rval = combat_result(warpwar_ship_tactic_get(1),
+                         warpwar_ship_tactic_get(2),
+                         warpwar_ship_pd_get(1) - warpwar_ship_pd_get(2),
+                         &result, be_verbose = 0);
+    printf("1 targeting 2 result: %s\n", result_to_str(result));
+
+    rval = combat_result(warpwar_ship_tactic_get(2),
+                         warpwar_ship_tactic_get(1),
+                         warpwar_ship_pd_get(2) - warpwar_ship_pd_get(1),
+                         &result, be_verbose = 0);
+    printf("2 targeting 1 result: %s\n", result_to_str(result));
+#endif
 
     return 0;
 }

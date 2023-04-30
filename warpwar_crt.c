@@ -40,6 +40,30 @@ char * result_to_str (int result)
     }
 }
 
+int result_to_damage (int result, int b, int s)
+{
+    int damage = 0;
+    if ((RESULT_MISS == result) || (RESULT_ESCAPES == result))
+    {
+        return 0;
+    }
+    damage = b - s;
+    if (RESULT_HIT_PLUS1 == result)
+    {
+        damage += 1;
+    }
+    if (RESULT_HIT_PLUS2 == result)
+    {
+        damage += 2;
+    }
+    if (damage < 0)
+    {
+        damage = 0;
+    }
+    /* TODO future: adjust for tech levels */
+    return damage;
+}
+
 int
 combat_result (int firing_ships_tactic, int target_ships_tactic, int drive_diff, int *ptr_result, int verbose)
 {
