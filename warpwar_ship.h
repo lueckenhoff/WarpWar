@@ -22,7 +22,8 @@ enum {
 
     FLAG_WHITE     = 0x1,
     FLAG_BLUE      = 0x2,
-    FLAG_WARPSHIP  = 0x4
+    FLAG_WARPSHIP  = 0x4,
+    FLAG_MISSILE   = 0x8,
 };
 
 typedef enum {
@@ -73,6 +74,8 @@ extern int warpwar_ship_issue_orders
     warpwar_ship_stats_t *  orders,
     warpwar_bool_t          verbose
     );
+
+extern struct warpwar_ship_t * gbl_ship_list;
 
 extern void warpwar_print_one_ship(struct warpwar_ship_t * ship);
 extern void warpwar_print_all_ships(void);
