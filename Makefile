@@ -2,7 +2,7 @@
 
 SHELL = /bin/sh
 BUILD_DIR := build
-CC = clang
+CC = cc
 CFLAGS = -g
 LD = ${CC}
 LDFLAGS = 

@@ -155,6 +155,39 @@ warpwar_ship_build
 
 
 
+int warpwar_ship_decommision (struct warpwar_ship_t *ship)
+{
+    struct warpwar_ship_t *pred;
+
+    if (NULL == ship)
+    {
+	return -1;
+    }
+    if (gbl_ship_list == ship)
+    {
+	gbl_ship_list = ship->next;
+    }
+    else
+    {
+	for (pred = gbl_ship_list; pred; pred = ship->next)
+	{
+	    if (pred->next == ship)
+	    {
+		pred->next = ship->next;
+		break;
+	    }
+	}
+    }
+    if (ship->missile_pd_settings)
+    {
+	free(ship->missile_pd_settings);
+    }
+    free(ship);
+    return 0;
+}
+
+
+
 struct warpwar_ship_t *
 warpwar_ship_lookup_by_idnum (unsigned int idnum)
 {
