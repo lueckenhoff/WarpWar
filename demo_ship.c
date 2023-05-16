@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>     /* for memcpy */
 #include <strings.h>    /* for strcasecmp */
 
 #include "warpwar_crt.h"
@@ -88,9 +89,9 @@ int main (int argc, char **argv)
     warpwar_resolve_all_ships_damages();
     warpwar_print_all_ships();
 
-    warpwar_ship_decommision(ptr_ship1);
-    warpwar_ship_decommision(ptr_ship2);
-    warpwar_ship_decommision(ptr_ship3);
+    warpwar_ship_decommission(ptr_ship1);
+    warpwar_ship_decommission(ptr_ship2);
+    warpwar_ship_decommission(ptr_ship3);
     return 0;
 }
 

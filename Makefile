@@ -3,7 +3,7 @@
 SHELL = /bin/sh
 BUILD_DIR := build
 CC = cc
-CFLAGS = -g
+CFLAGS = -Wall -g
 LD = ${CC}
 LDFLAGS = 
 DEMO_CRT_OBJS=demo_crt.o warpwar_crt.o

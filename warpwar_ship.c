@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>     /* for malloc */
+#include <string.h>     /* for memcpy */
 #include <strings.h>    /* for bzero */
 #include <assert.h>     /* for assert */
 #include "warpwar_ship.h"
@@ -155,7 +156,7 @@ warpwar_ship_build
 
 
 
-int warpwar_ship_decommision (struct warpwar_ship_t *ship)
+int warpwar_ship_decommission (struct warpwar_ship_t *ship)
 {
     struct warpwar_ship_t *pred;
 
