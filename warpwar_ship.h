@@ -65,6 +65,9 @@ extern struct warpwar_ship_t * warpwar_ship_build
     );
 extern int warpwar_ship_decommission (struct warpwar_ship_t *ship);
 
+extern struct warpwar_ship_t * warpwar_ship_lookup_by_idnum(unsigned int idnum);
+
+extern char * warpwar_ship_name_get(unsigned int idnum);
 
 extern int warpwar_ship_issue_orders
     (
