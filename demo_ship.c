@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>    /* for strcasecmp */
+#include <time.h>
 
 #include "warpwar_crt.h"
 #include "warpwar_ship.h"
@@ -20,6 +21,8 @@ int main (int argc, char **argv)
     int result;
     int rval;
     int be_verbose;
+
+    srandom(time(0));
 
     /* ship 1: */
     ptr_ship = warpwar_ship_build(isa_warpship = 1, ALLEGIANCE_BLUE,
