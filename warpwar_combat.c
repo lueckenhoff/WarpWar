@@ -78,7 +78,7 @@ warpwar_ship_isdead (struct warpwar_ship_t * ship)
 
 
 
-static void warpwar_resolve_one_ships_damage (struct warpwar_ship_t * ship)
+static void warpwar_resolve_one_ships_damage_distrib (struct warpwar_ship_t * ship)
 {
     struct warpwar_ship_t *target_ship;
     int rval;
@@ -89,7 +89,7 @@ static void warpwar_resolve_one_ships_damage (struct warpwar_ship_t * ship)
     assert(ship);
     while ((ship->current_damage > 0) && (!warpwar_ship_isdead(ship)))
     {
-        printf("warpwar_resolve_one_ships_damage: %s current_damage=%u\n", ship->name, ship->current_damage);
+//        printf("warpwar_resolve_one_ships_damage_distrib %s current_damage=%u\n", ship->name, ship->current_damage);
         warpwar_print_one_ship(ship);
         if ((ship->stats_effective.sr >= ship->stats_effective.pd)
             && (ship->stats_effective.sr >= ship->stats_effective.b)
@@ -154,7 +154,76 @@ static void warpwar_resolve_one_ships_damage (struct warpwar_ship_t * ship)
         }
     }
     warpwar_print_one_ship(ship);
-    printf("warpwar_resolve_one_ships_damage: exit\n");
+    printf("warpwar_resolve_one_ships_damage_distrib: exit\n");
+    assert(warpwar_ship_isdead(ship) || (0 == ship->current_damage));
+}
+
+
+
+static void warpwar_resolve_one_ships_damage_random (struct warpwar_ship_t * ship)
+{
+    struct warpwar_ship_t *target_ship;
+    int rval;
+    int result;
+    int be_verbose = 0;
+    int damage;
+    int r;
+
+    assert(ship);
+    while ((ship->current_damage > 0) && (!warpwar_ship_isdead(ship)))
+    {
+//        printf("warpwar_resolve_one_ships_damage_random: %s current_damage=%u\n", ship->name, ship->current_damage);
+//        warpwar_print_one_ship(ship);
+        /* sr m t b s pd */
+        r = random() % 6;
+        switch (r)
+        {
+        case 0:
+            if (ship->stats_effective.sr > 0)
+            {
+                ship->stats_effective.sr -= 1;
+                ship->current_damage -= 1;
+            }
+            break;
+        case 1:
+            if (ship->stats_effective.m >= 3)
+            {
+                ship->stats_effective.m -= 3;
+                ship->current_damage -= 1;
+            }
+            break;
+        case 2:
+            if (ship->stats_effective.t > 0)
+            {
+                ship->stats_effective.t -= 1;
+                ship->current_damage -= 1;
+            }
+            break;
+        case 3:
+            if (ship->stats_effective.b > 0)
+            {
+                ship->stats_effective.b -= 1;
+                ship->current_damage -= 1;
+            }
+            break;
+        case 4:
+            if (ship->stats_effective.s > 0)
+            {
+                ship->stats_effective.s -= 1;
+                ship->current_damage -= 1;
+            }
+            break;
+        case 5:
+            if (ship->stats_effective.pd > 0)
+            {
+                ship->stats_effective.pd -= 1;
+                ship->current_damage -= 1;
+            }
+            break;
+        }
+    }
+    warpwar_print_one_ship(ship);
+    printf("warpwar_resolve_one_ships_damage_random: exit\n");
     assert(warpwar_ship_isdead(ship) || (0 == ship->current_damage));
 }
 
@@ -166,7 +235,7 @@ void warpwar_resolve_all_ships_damages (void)
 
     for (ship = gbl_ship_list; ship; ship = ship->next)
     {
-        warpwar_resolve_one_ships_damage(ship);
+        warpwar_resolve_one_ships_damage_random(ship);
     }
 }
 
