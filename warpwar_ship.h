@@ -45,8 +45,8 @@ struct warpwar_ship_t {
     warpwar_ship_stats_t    stats_effective;
     warpwar_ship_stats_t    current_orders;
     unsigned int *          missile_pd_settings;
-    struct warpware_ship_t *systemship_list;
-    struct warpware_ship_t *next;
+    struct warpwar_ship_t *systemship_list;
+    struct warpwar_ship_t *next;
 };
 
 
@@ -63,6 +63,7 @@ extern struct warpwar_ship_t * warpwar_ship_build
     unsigned int *          ptr_credits_in_bank,
     warpwar_bool_t          verbose
     );
+extern int warpwar_ship_decommission (struct warpwar_ship_t *ship);
 
 extern struct warpwar_ship_t * warpwar_ship_lookup_by_idnum(unsigned int idnum);
 
@@ -81,6 +82,7 @@ extern struct warpwar_ship_t * gbl_ship_list;
 
 extern void warpwar_print_one_ship(struct warpwar_ship_t * ship);
 extern void warpwar_print_all_ships(void);
+extern char * warpwar_ship_name_get(unsigned int idnum);
 extern int warpwar_ship_tactic_get(unsigned int idnum);
 extern int warpwar_ship_pd_get(unsigned int idnum);
 extern void warpwar_resolve_all_attacks(void);

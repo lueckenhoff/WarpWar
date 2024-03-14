@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>     /* for malloc */
+#include <string.h>     /* for memcpy */
 #include <strings.h>    /* for bzero */
 #include <assert.h>     /* for assert */
 #include "warpwar_ship.h"
@@ -151,6 +152,39 @@ warpwar_ship_build
     }
     gbl_ship_list = newship;
     return newship;
+}
+
+
+
+int warpwar_ship_decommission (struct warpwar_ship_t *ship)
+{
+    struct warpwar_ship_t *pred;
+
+    if (NULL == ship)
+    {
+	return -1;
+    }
+    if (gbl_ship_list == ship)
+    {
+	gbl_ship_list = ship->next;
+    }
+    else
+    {
+	for (pred = gbl_ship_list; pred; pred = ship->next)
+	{
+	    if (pred->next == ship)
+	    {
+		pred->next = ship->next;
+		break;
+	    }
+	}
+    }
+    if (ship->missile_pd_settings)
+    {
+	free(ship->missile_pd_settings);
+    }
+    free(ship);
+    return 0;
 }
 
 
