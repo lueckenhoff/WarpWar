@@ -59,7 +59,7 @@ void warpwar_resolve_all_attacks (void)
 
 
 warpwar_bool_t
-warpwar_ship_isdead (struct warpwar_ship_t * ship)
+warpwar_ship_is_dead (struct warpwar_ship_t * ship)
 {
     warpwar_ship_stats_t *stats;
     assert(ship);
@@ -87,7 +87,7 @@ static void warpwar_resolve_one_ships_damage_distrib (struct warpwar_ship_t * sh
     int damage;
 
     assert(ship);
-    while ((ship->current_damage > 0) && (!warpwar_ship_isdead(ship)))
+    while ((ship->current_damage > 0) && (!warpwar_ship_is_dead(ship)))
     {
 //        printf("warpwar_resolve_one_ships_damage_distrib %s current_damage=%u\n", ship->name, ship->current_damage);
         warpwar_print_one_ship(ship);
@@ -155,7 +155,7 @@ static void warpwar_resolve_one_ships_damage_distrib (struct warpwar_ship_t * sh
     }
     warpwar_print_one_ship(ship);
     printf("warpwar_resolve_one_ships_damage_distrib: exit\n");
-    assert(warpwar_ship_isdead(ship) || (0 == ship->current_damage));
+    assert(warpwar_ship_is_dead(ship) || (0 == ship->current_damage));
 }
 
 
@@ -170,7 +170,7 @@ static void warpwar_resolve_one_ships_damage_random (struct warpwar_ship_t * shi
     int r;
 
     assert(ship);
-    while ((ship->current_damage > 0) && (!warpwar_ship_isdead(ship)))
+    while ((ship->current_damage > 0) && (!warpwar_ship_is_dead(ship)))
     {
 //        printf("warpwar_resolve_one_ships_damage_random: %s current_damage=%u\n", ship->name, ship->current_damage);
 //        warpwar_print_one_ship(ship);
@@ -224,7 +224,7 @@ static void warpwar_resolve_one_ships_damage_random (struct warpwar_ship_t * shi
     }
     warpwar_print_one_ship(ship);
     printf("warpwar_resolve_one_ships_damage_random: exit\n");
-    assert(warpwar_ship_isdead(ship) || (0 == ship->current_damage));
+    assert(warpwar_ship_is_dead(ship) || (0 == ship->current_damage));
 }
 
 
